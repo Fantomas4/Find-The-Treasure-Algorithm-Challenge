@@ -53,6 +53,30 @@ public class Mines {
         }
     }
 
+    //    ************ ATTENTION : slide 197, book pdf
+    private int determinePointSide(int[] targetPoint, int[] linePoint1, int[] linePoint2) {
+        int value = (targetPoint[1] - linePoint1[1]) * (linePoint2[0] - linePoint1[0]) -
+                (linePoint2[1] - linePoint1[1]) * (targetPoint[0] - linePoint1[0]);
+
+        if (value > 0) {
+            return 1;
+        } else if (value < 0) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    //    ************ ATTENTION : slide 197, book pdf
+    private int pointToLineDist(int[] targetPoint, int[] linePoint1, int[] linePoint2) {
+        return Math.abs((targetPoint[1] - linePoint1[1]) * (linePoint2[0] - linePoint1[0]) -
+                (linePoint2[1] - linePoint1[1]) * (targetPoint[0] - linePoint1[0]));
+    }
+
+    private void quickhull(int[] p1, int[] pn, int side) {
+
+    }
+
     public static void main(String[] args) {
 //        System.out.println(args[0]);
         Mines mines = new Mines(args[0]);
