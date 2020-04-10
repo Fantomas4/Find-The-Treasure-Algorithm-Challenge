@@ -13,6 +13,9 @@ public class Mines {
     List<int[]> topSubHull = new ArrayList<>();
     List<int[]> bottomSubHull = new ArrayList<>();
 
+//    DIAG!!!
+    int counter = 0;
+
     Mines(String inputFileDir) {
         loadFile(inputFileDir);
     }
@@ -29,7 +32,6 @@ public class Mines {
                 line = scanner.nextLine();
 
                 if (!line.equals("")) {
-                    System.out.println(line);
                     coordinates = line.split(" ");
 
                     int[] point = new int[2];
@@ -46,14 +48,15 @@ public class Mines {
         }
 
         this.startPos = minesPos.remove(0);
-        this.treasurePos = minesPos.remove(minesPos.size() - 1);
+        this.treasurePos = minesPos.remove(0);
 
-        System.out.println("================ DIAG ================");
-        System.out.printf("*** Starting position is: %d %d ***\n", this.startPos[0], this.startPos[1]);
-        System.out.printf("*** Treasure position is: %d %d ***\n", this.treasurePos[0], this.treasurePos[1]);
-        for (int[] point : this.minesPos) {
-            System.out.printf("%d %d\n", point[0], point[1]);
-        }
+//        // DIAG ONLY!!!
+//        System.out.println("================ DIAG ================");
+//        System.out.printf("*** Starting position is: %d %d ***\n", this.startPos[0], this.startPos[1]);
+//        System.out.printf("*** Treasure position is: %d %d ***\n", this.treasurePos[0], this.treasurePos[1]);
+//        for (int[] point : this.minesPos) {
+//            System.out.printf("%d %d\n", point[0], point[1]);
+//        }
     }
 
     private double pointsDistance(int[] point1, int[] point2) {
@@ -104,6 +107,10 @@ public class Mines {
 
     private void quickhull(int[] p1, int[] pn, int side) {
 
+//        DIAG!!!
+        System.out.println(counter);
+        counter += 1;
+
         int maxIndex = -1;
         int maxDistance = 0;
 
@@ -117,11 +124,17 @@ public class Mines {
                     maxDistance = tempDistance;
                 } else if (tempDistance == maxDistance) {
                     // **** WIP: Calculate angle - slide 196
+                    if (maxPointUsingAngle(minesPos.get(maxIndex), minesPos.get(i), p1, pn) ==
+                            minesPos.get(i)) {
+                        maxIndex = i;
+                        maxDistance = tempDistance;
+                    }
                 }
             }
         }
 
         if (maxIndex == -1) {
+            System.out.println("MPIKA");
             //If no points are found, add p1 and pn to the
             // appropriate Sub-Hull arraylist
             if (side == 1) {
@@ -131,14 +144,41 @@ public class Mines {
                 bottomSubHull.add(p1);
                 bottomSubHull.add(pn);
             }
-            return;
+        } else {
+            System.out.println("MPIKA2");
+            // Na afairw apo to minesPos osa stoixeia elegxw oste na meiwsw ton arithmo epanalipseon
+            // stiw epomenes anazitiseis quickhull?
+
+            quickhull(minesPos.get(maxIndex), p1, -determinePointSide(pn, minesPos.get(maxIndex), p1));
+            quickhull(minesPos.get(maxIndex), pn, -determinePointSide(p1, minesPos.get(maxIndex), pn));
+        }
+    }
+
+    public void findShortestPath() {
+        quickhull(startPos, treasurePos, 1);
+        double topPathDistance = 0;
+        for (int i = 0; i < topSubHull.size() - 1; i++) {
+            topPathDistance += pointsDistance(topSubHull.get(i), topSubHull.get(i + 1));
         }
 
-        // Na afairw apo to minesPos osa stoixeia elegxw oste na meiwsw ton arithmo epanalipseon
-        // stiw epomenes anazitiseis quickhull?
+        quickhull(startPos, treasurePos, -1);
+        double bottomPathDistance = 0;
+        for (int i = 0; i < bottomSubHull.size() - 1; i++) {
+            bottomPathDistance += pointsDistance(bottomSubHull.get(i), bottomSubHull.get(i + 1));
+        }
 
-        quickhull(minesPos.get(maxIndex), p1, -determinePointSide(pn, minesPos.get(maxIndex), p1));
-        quickhull(minesPos.get(maxIndex), pn, -determinePointSide(p1, minesPos.get(maxIndex), pn));
+        // DIAG ONLY!!!
+        System.out.println(topPathDistance);
+        for (int[] point : topSubHull) {
+            System.out.printf("%d %d\n", point[0], point[1]);
+        }
+
+        System.out.println("\n\n");
+
+        System.out.println(bottomPathDistance);
+        for (int[] point : bottomSubHull) {
+            System.out.printf("%d %d\n", point[0], point[1]);
+        }
     }
 
     public static void main(String[] args) {
@@ -150,6 +190,9 @@ public class Mines {
 //        int[] C = new int[]{1, 0};
 //
 //        mines.maxPointUsingAngle(A, new int[]{5, 5}, B, C);
+
+        mines.findShortestPath();
+
 
 
 
