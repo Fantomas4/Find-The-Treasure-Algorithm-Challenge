@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Mines {
 
@@ -10,8 +8,7 @@ public class Mines {
     int[] startPos = new int[2];
     int[] treasurePos = new int[2];
 
-    List<int[]> topSubHull = new ArrayList<>();
-    List<int[]> bottomSubHull = new ArrayList<>();
+    Set<int[]> hull = new HashSet<>();
 
 //    DIAG!!!
     int counter = 0;
@@ -137,46 +134,51 @@ public class Mines {
             System.out.println("MPIKA");
             //If no points are found, add p1 and pn to the
             // appropriate Sub-Hull arraylist
-            if (side == 1) {
-                topSubHull.add(p1);
-                topSubHull.add(pn);
-            } else if (side == -1) {
-                bottomSubHull.add(p1);
-                bottomSubHull.add(pn);
-            }
-        } else {
-            System.out.println("MPIKA2");
-            // Na afairw apo to minesPos osa stoixeia elegxw oste na meiwsw ton arithmo epanalipseon
-            // stiw epomenes anazitiseis quickhull?
-
-            quickhull(minesPos.get(maxIndex), p1, -determinePointSide(pn, minesPos.get(maxIndex), p1));
-            quickhull(minesPos.get(maxIndex), pn, -determinePointSide(p1, minesPos.get(maxIndex), pn));
+//            if (side == 1) {
+//                topSubHull.add(p1);
+//                topSubHull.add(pn);
+//            } else if (side == -1) {
+//                bottomSubHull.add(p1);
+//                bottomSubHull.add(pn);
+//            }
+            hull.add(p1);
+            hull.add(pn);
+            return;
         }
+        System.out.println("MPIKA2");
+        // Na afairw apo to minesPos osa stoixeia elegxw oste na meiwsw ton arithmo epanalipseon
+        // stiw epomenes anazitiseis quickhull?
+
+        quickhull(minesPos.get(maxIndex), p1, -determinePointSide(pn, minesPos.get(maxIndex), p1));
+        quickhull(minesPos.get(maxIndex), pn, -determinePointSide(p1, minesPos.get(maxIndex), pn));
     }
 
     public void findShortestPath() {
         quickhull(startPos, treasurePos, 1);
-        double topPathDistance = 0;
-        for (int i = 0; i < topSubHull.size() - 1; i++) {
-            topPathDistance += pointsDistance(topSubHull.get(i), topSubHull.get(i + 1));
-        }
-
+//        double topPathDistance = 0;
+//        for (int i = 0; i < topSubHull.size() - 1; i++) {
+//            topPathDistance += pointsDistance(topSubHull.get(i), topSubHull.get(i + 1));
+//        }
+//
         quickhull(startPos, treasurePos, -1);
-        double bottomPathDistance = 0;
-        for (int i = 0; i < bottomSubHull.size() - 1; i++) {
-            bottomPathDistance += pointsDistance(bottomSubHull.get(i), bottomSubHull.get(i + 1));
-        }
-
-        // DIAG ONLY!!!
-        System.out.println(topPathDistance);
-        for (int[] point : topSubHull) {
-            System.out.printf("%d %d\n", point[0], point[1]);
-        }
-
-        System.out.println("\n\n");
-
-        System.out.println(bottomPathDistance);
-        for (int[] point : bottomSubHull) {
+//        double bottomPathDistance = 0;
+//        for (int i = 0; i < bottomSubHull.size() - 1; i++) {
+//            bottomPathDistance += pointsDistance(bottomSubHull.get(i), bottomSubHull.get(i + 1));
+//        }
+//
+//        // DIAG ONLY!!!
+//        System.out.println(topPathDistance);
+//        for (int[] point : topSubHull) {
+//            System.out.printf("%d %d\n", point[0], point[1]);
+//        }
+//
+//        System.out.println("\n\n");
+//
+//        System.out.println(bottomPathDistance);
+//        for (int[] point : bottomSubHull) {
+//            System.out.printf("%d %d\n", point[0], point[1]);
+//        }
+        for (int[] point : hull) {
             System.out.printf("%d %d\n", point[0], point[1]);
         }
     }
