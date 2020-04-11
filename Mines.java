@@ -105,11 +105,6 @@ public class Mines {
     }
 
     private void quickhull(int[] p1, int[] pn, int side) {
-
-//        DIAG!!!
-        System.out.println(counter);
-        counter += 1;
-
         int maxIndex = -1;
         int maxDistance = 0;
 
@@ -133,7 +128,6 @@ public class Mines {
         }
 
         if (maxIndex == -1) {
-            System.out.println("MPIKA");
             //If no points are found, add p1 and pn to the
             // appropriate Sub-Hull arraylist
 //            if (side == 1) {
@@ -147,7 +141,7 @@ public class Mines {
             hull.add(pn);
             return;
         }
-        System.out.println("MPIKA2");
+
         // Na afairw apo to minesPos osa stoixeia elegxw oste na meiwsw ton arithmo epanalipseon
         // stiw epomenes anazitiseis quickhull?
 
@@ -159,9 +153,11 @@ public class Mines {
         quickhull(startPos, treasurePos, 1);
         quickhull(startPos, treasurePos, -1);
 
-        for (int[] point : hull) {
-            System.out.printf("%d %d\n", point[0], point[1]);
-        }
+//        //        DIAG !!!
+//        System.out.println("Convex hull is: ");
+//        for (int[] point : hull) {
+//            System.out.printf("%d %d\n", point[0], point[1]);
+//        }
     }
 
     private void findSubHulls() {
@@ -231,11 +227,66 @@ public class Mines {
         return initialList;
     }
 
+    private double calculatePathDistance(List<int[]> pathPoints) {
+        double totalDistance = 0;
+
+        for (int i = 0; i < pathPoints.size() - 1; i++) {
+            totalDistance += pointsDistance(pathPoints.get(i), pathPoints.get(i + 1));
+        }
+
+        return totalDistance;
+    }
+
+    private String pathPointsString(List<int[]> pathPoints) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        int size = pathPoints.size();
+        for (int i = 0; i < size - 1; i++) {
+            stringBuilder.append(String.format("(%d, %d)-->", pathPoints.get(i)[0], pathPoints.get(i)[1]));
+        }
+        stringBuilder.append(String.format("(%d, %d)", pathPoints.get(size - 1)[0], pathPoints.get(size - 1)[1]));
+
+        return stringBuilder.toString();
+    }
+
     public void findShortestPath() {
         findConvexHull();
         findSubHulls();
 
-        
+
+        List<int[]> topSortedPath = mergeSort(topSubHull);
+        // Add start position at the start of the sorted top path list
+        topSortedPath.add(0, startPos);
+        // Add treasure position at the end of the sorted top path list
+        topSortedPath.add(treasurePos);
+//        //        DIAG !!!
+//        System.out.println("===================");
+//        for (int[] point : topSortedPath) {
+//            System.out.printf("%d %d\n", point[0], point[1]);
+//        }
+
+        List<int[]> bottomSortedPath = mergeSort(bottomSubHull);
+        // Add start position at the start of the sorted bottom path list
+        bottomSortedPath.add(0, startPos);
+        // Add treasure position at the end of the sorted bottom path list
+        bottomSortedPath.add(treasurePos);
+//        //        DIAG !!!
+//        System.out.println("===================");
+//        for (int[] point : bottomSortedPath) {
+//            System.out.printf("%d %d\n", point[0], point[1]);
+//        }
+
+        double topPathDistance = calculatePathDistance(topSortedPath);
+        double bottomPathDistance = calculatePathDistance(bottomSortedPath);
+
+        if (topPathDistance <= bottomPathDistance) {
+            System.out.printf("The shortest distance is %.5f\n", topPathDistance);
+            System.out.println("The shortest path is " + pathPointsString(topSortedPath));
+        } else {
+            System.out.printf("The shortest distance is %.5f\n", bottomPathDistance);
+            System.out.println("The shortest path is " + pathPointsString(bottomSortedPath));
+        }
+
 
     }
 
