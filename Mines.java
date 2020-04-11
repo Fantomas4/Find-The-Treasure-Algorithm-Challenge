@@ -291,14 +291,7 @@ public class Mines {
     }
 
     public static void main(String[] args) {
-//        System.out.println(args[0]);
         Mines mines = new Mines(args[0]);
-
-//        int[] A = new int[]{0, 0};
-//        int[] B = new int[]{0, 1};
-//        int[] C = new int[]{1, 0};
-//
-//        mines.maxPointUsingAngle(A, new int[]{5, 5}, B, C);
 
         mines.findShortestPath();
 
