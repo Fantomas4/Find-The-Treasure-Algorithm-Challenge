@@ -9,6 +9,8 @@ public class Mines {
     int[] treasurePos = new int[2];
 
     Set<int[]> hull = new HashSet<>();
+    List<int[]> topSubHull = new ArrayList<>();
+    List<int[]> bottomSubHull = new ArrayList<>();
 
 //    DIAG!!!
     int counter = 0;
@@ -153,34 +155,38 @@ public class Mines {
         quickhull(minesPos.get(maxIndex), pn, -determinePointSide(p1, minesPos.get(maxIndex), pn));
     }
 
-    public void findShortestPath() {
+    private void findConvexHull() {
         quickhull(startPos, treasurePos, 1);
-//        double topPathDistance = 0;
-//        for (int i = 0; i < topSubHull.size() - 1; i++) {
-//            topPathDistance += pointsDistance(topSubHull.get(i), topSubHull.get(i + 1));
-//        }
-//
         quickhull(startPos, treasurePos, -1);
-//        double bottomPathDistance = 0;
-//        for (int i = 0; i < bottomSubHull.size() - 1; i++) {
-//            bottomPathDistance += pointsDistance(bottomSubHull.get(i), bottomSubHull.get(i + 1));
-//        }
-//
-//        // DIAG ONLY!!!
-//        System.out.println(topPathDistance);
-//        for (int[] point : topSubHull) {
-//            System.out.printf("%d %d\n", point[0], point[1]);
-//        }
-//
-//        System.out.println("\n\n");
-//
-//        System.out.println(bottomPathDistance);
-//        for (int[] point : bottomSubHull) {
-//            System.out.printf("%d %d\n", point[0], point[1]);
-//        }
+
         for (int[] point : hull) {
             System.out.printf("%d %d\n", point[0], point[1]);
         }
+    }
+
+    private void findSubHulls() {
+        for (int[] point : hull) {
+            int side = determinePointSide(point, startPos, treasurePos);
+            if (side == 1) {
+                topSubHull.add(point);
+            } else if (side == -1) {
+                bottomSubHull.add(point);
+            }
+        }
+    }
+
+    public void findShortestPath() {
+        findConvexHull();
+        findSubHulls();
+
+        List<int[]> topPointsWithDist = new ArrayList<>();
+        List<int[]> bottomPointsWithDist = new ArrayList<>();
+
+        for (int[] point : topSubHull) {
+
+        }
+
+
     }
 
     public static void main(String[] args) {
@@ -194,9 +200,6 @@ public class Mines {
 //        mines.maxPointUsingAngle(A, new int[]{5, 5}, B, C);
 
         mines.findShortestPath();
-
-
-
 
     }
 }
