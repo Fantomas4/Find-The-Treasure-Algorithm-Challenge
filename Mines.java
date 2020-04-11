@@ -175,17 +175,67 @@ public class Mines {
         }
     }
 
+    private List<int[]> merge(List<int[]> subList1, List<int[]> subList2) {
+        int i = 0;
+        int j = 0;
+
+        List<int[]> mergedList = new ArrayList<>();
+
+        int size1 = subList1.size();
+        int size2 = subList2.size();
+        while (i < size1 && j < size2) {
+            // Compare points based on their x value
+            if (subList1.get(i)[0] <= subList2.get(j)[0]) {
+                mergedList.add(subList1.get(i));
+                i += 1;
+            } else {
+                mergedList.add(subList2.get(j));
+                j += 1;
+            }
+        }
+
+        if (i == size1) {
+            while (j < size2) {
+                mergedList.add(subList2.get(j));
+                j += 1;
+            }
+        } else {
+            while (i < size1) {
+                mergedList.add(subList1.get(i));
+                i += 1;
+            }
+        }
+
+        return mergedList;
+    }
+
+    private List<int[]> mergeSort(List<int[]> initialList) {
+        double size = initialList.size();
+
+        if (size > 1) {
+            List<int[]> subList1 = new ArrayList<>();
+            for (int i = 0; i < Math.floor(size / 2); i++) {
+                subList1.add(initialList.get(i));
+            }
+
+            List<int[]> subList2 = new ArrayList<>();
+            for (int i = (int) Math.floor(size / 2); i < size; i++) {
+                subList2.add(initialList.get(i));
+            }
+
+            subList1 = mergeSort(subList1);
+            subList2 = mergeSort(subList2);
+            initialList = merge(subList1, subList2);
+        }
+
+        return initialList;
+    }
+
     public void findShortestPath() {
         findConvexHull();
         findSubHulls();
 
-        List<int[]> topPointsWithDist = new ArrayList<>();
-        List<int[]> bottomPointsWithDist = new ArrayList<>();
-
-        for (int[] point : topSubHull) {
-
-        }
-
+        
 
     }
 
