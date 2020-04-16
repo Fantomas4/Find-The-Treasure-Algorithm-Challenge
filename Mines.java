@@ -281,10 +281,10 @@ public class Mines {
 
         if (topPathDistance <= bottomPathDistance) {
             System.out.printf("The shortest distance is %.5f\n", topPathDistance);
-            System.out.println("The shortest path is " + pathPointsString(topSortedPath));
+            System.out.println("The shortest path is:" + pathPointsString(topSortedPath));
         } else {
             System.out.printf("The shortest distance is %.5f\n", bottomPathDistance);
-            System.out.println("The shortest path is " + pathPointsString(bottomSortedPath));
+            System.out.println("The shortest path is:" + pathPointsString(bottomSortedPath));
         }
 
 
