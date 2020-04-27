@@ -7,6 +7,8 @@ public class Mines {
     List<int[]> minesPos = new ArrayList<>();
     int[] startPos = new int[2];
     int[] treasurePos = new int[2];
+    
+    List<int[]> candidatePoints = new ArrayList<>();
 
     Set<int[]> hull = new HashSet<>();
     List<int[]> topSubHull = new ArrayList<>();
@@ -16,10 +18,13 @@ public class Mines {
     int counter = 0;
 
     Mines(String inputFileDir) {
-        loadFile(inputFileDir);
+
+        if (loadFile(inputFileDir)) {
+            findShortestPath();
+        }
     }
 
-    private void loadFile(String dir) {
+    private boolean loadFile(String dir) {
         File file = new File(dir);
         Scanner scanner;
         String line;
@@ -40,14 +45,16 @@ public class Mines {
                     minesPos.add(point);
                 }
             }
+            this.startPos = minesPos.remove(0);
+            this.treasurePos = minesPos.remove(0);
+            return true;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             System.out.println("*** Error: File not Found. ***");
-            return;
+            return false;
         }
 
-        this.startPos = minesPos.remove(0);
-        this.treasurePos = minesPos.remove(0);
+
 
 //        // DIAG ONLY!!!
 //        System.out.println("================ DIAG ================");
@@ -242,9 +249,9 @@ public class Mines {
 
         int size = pathPoints.size();
         for (int i = 0; i < size - 1; i++) {
-            stringBuilder.append(String.format("(%d, %d)-->", pathPoints.get(i)[0], pathPoints.get(i)[1]));
+            stringBuilder.append(String.format("(%d,%d)-->", pathPoints.get(i)[0], pathPoints.get(i)[1]));
         }
-        stringBuilder.append(String.format("(%d, %d)", pathPoints.get(size - 1)[0], pathPoints.get(size - 1)[1]));
+        stringBuilder.append(String.format("(%d,%d)", pathPoints.get(size - 1)[0], pathPoints.get(size - 1)[1]));
 
         return stringBuilder.toString();
     }
@@ -255,9 +262,9 @@ public class Mines {
 
 
         List<int[]> topSortedPath = mergeSort(topSubHull);
-        // Add start position at the start of the sorted top path list
+        // Add start position to the start of the sorted top path list
         topSortedPath.add(0, startPos);
-        // Add treasure position at the end of the sorted top path list
+        // Add treasure position to the end of the sorted top path list
         topSortedPath.add(treasurePos);
 //        //        DIAG !!!
 //        System.out.println("===================");
@@ -292,8 +299,6 @@ public class Mines {
 
     public static void main(String[] args) {
         Mines mines = new Mines(args[0]);
-
-        mines.findShortestPath();
 
     }
 }
