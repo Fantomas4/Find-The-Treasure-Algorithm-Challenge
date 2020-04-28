@@ -273,7 +273,7 @@ public class Mines {
 
     /**
      * Given a list of path points, generates the result path string in the format
-     * defined by the task's description
+     * specified by the task's description
      * @param pathPoints A list of path points.
      * @return A string that contains the result path in the appropriate format.
      */
@@ -289,6 +289,17 @@ public class Mines {
         return stringBuilder.toString();
     }
 
+    /**
+     * Prints the given result path distance and path points in the appropriate
+     * format specified by the task's description.
+     * @param pathDistance The result path distance.
+     * @param pathPoints The result path points
+     */
+    private void printResults(double pathDistance, List<int[]> pathPoints) {
+        System.out.printf("The shortest distance is %.5f\n", pathDistance);
+        System.out.println("The shortest path is:" + pathPointsString(pathPoints));
+    }
+
     public void findShortestPath() {
         findConvexHull();
         findSubHulls();
@@ -300,23 +311,19 @@ public class Mines {
         topSortedPath.add(treasurePos);
 
         List<int[]> bottomSortedPath = mergeSort(bottomSubHull);
-        // Add start position at the start of the sorted bottom path list
+        // Add start position to the start of the sorted bottom path list
         bottomSortedPath.add(0, startPos);
-        // Add treasure position at the end of the sorted bottom path list
+        // Add treasure position to the end of the sorted bottom path list
         bottomSortedPath.add(treasurePos);
 
         double topPathDistance = calculatePathDistance(topSortedPath);
         double bottomPathDistance = calculatePathDistance(bottomSortedPath);
 
         if (topPathDistance <= bottomPathDistance) {
-            System.out.printf("The shortest distance is %.5f\n", topPathDistance);
-            System.out.println("The shortest path is:" + pathPointsString(topSortedPath));
+            printResults(topPathDistance, topSortedPath);
         } else {
-            System.out.printf("The shortest distance is %.5f\n", bottomPathDistance);
-            System.out.println("The shortest path is:" + pathPointsString(bottomSortedPath));
+            printResults(bottomPathDistance, bottomSortedPath);
         }
-
-
     }
 
     public static void main(String[] args) {
