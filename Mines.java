@@ -83,12 +83,14 @@ public class Mines {
         // Calculate the angle tp1p1pn for test point 1 (tp1)
         double tp1pnDistance = pointsDistance(tp1, pn);
         double tp1p1Distance = pointsDistance(tp1, p1);
+        // Law of cosines
         double angle1 = Math.acos((Math.pow(tp1p1Distance, 2) + Math.pow(p1pnDistance, 2) - Math.pow(tp1pnDistance, 2))
                 / (2 * tp1p1Distance * p1pnDistance));
 
         // Calculate the angle tp2p1pn for test point 2 (tp2)
         double tp2pnDistance = pointsDistance(tp2, pn);
         double tp2p1Distance = pointsDistance(tp2, p1);
+        // Law of cosines
         double angle2 = Math.acos((Math.pow(tp2p1Distance, 2) + Math.pow(p1pnDistance, 2) - Math.pow(tp2pnDistance, 2))
                 / (2 * tp2p1Distance * p1pnDistance));
 
@@ -99,7 +101,15 @@ public class Mines {
         }
     }
 
-    //    ************ ATTENTION : slide 197, book pdf
+    /**
+     * Determines if a given point is located on the left side or on the right side of the line
+     * formed by 2 other given points.
+     * @param targetPoint The point for which we want to determine the location relative to the line side.
+     * @param linePoint1 The first point defining the given line.
+     * @param linePoint2 The second point defining the given line.
+     * @return 1 if the given point is located to the left of the line, 0 if the point is located on the line,
+     * -1 if the point is located to the right of the line.
+     */
     private int determinePointSide(int[] targetPoint, int[] linePoint1, int[] linePoint2) {
         int value = (targetPoint[1] - linePoint1[1]) * (linePoint2[0] - linePoint1[0]) -
                 (linePoint2[1] - linePoint1[1]) * (targetPoint[0] - linePoint1[0]);
@@ -114,7 +124,16 @@ public class Mines {
     }
 
     //    ************ ATTENTION : slide 197, book pdf
+    /**
+     * Calculates the distance of a given point from a given line.
+     * @param targetPoint The given point for which we want to calculate the distance from a line.
+     * @param linePoint1 The first point defining the given line.
+     * @param linePoint2 The second point defining the given line.
+     * @return The distance of the given point from the given line.
+     */
     private int pointToLineDist(int[] targetPoint, int[] linePoint1, int[] linePoint2) {
+        // Based on a formula from "Introduction to the Design and Analysis of Algorithms" by Levitin,
+        // page 197
         return Math.abs((targetPoint[1] - linePoint1[1]) * (linePoint2[0] - linePoint1[0]) -
                 (linePoint2[1] - linePoint1[1]) * (targetPoint[0] - linePoint1[0]));
     }
