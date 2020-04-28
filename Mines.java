@@ -4,26 +4,28 @@ import java.util.*;
 
 public class Mines {
 
-    List<int[]> minesPos = new ArrayList<>();
-    int[] startPos = new int[2];
-    int[] treasurePos = new int[2];
-    
-    List<int[]> candidatePoints = new ArrayList<>();
+    List<int[]> minesPos = new ArrayList<>(); // Contains the mines position coordinates read from the input file.
+    int[] startPos = new int[2]; // Contains the start position coordinates read from the input file.
+    int[] treasurePos = new int[2]; // Contains the treasure position coordinates read from the input file.
 
-    Set<int[]> hull = new HashSet<>();
-    List<int[]> topSubHull = new ArrayList<>();
-    List<int[]> bottomSubHull = new ArrayList<>();
-
-//    DIAG!!!
-    int counter = 0;
+    Set<int[]> hull = new HashSet<>(); // Contains the points that define the Convex Hull.
+    List<int[]> topSubHull = new ArrayList<>(); // Contains the points that define the top sub-hull of the Convex Hull.
+    List<int[]> bottomSubHull = new ArrayList<>(); // Contains the points that define the bottom sub-hull of the Convex Hull.
 
     Mines(String inputFileDir) {
-
+        // Check if loadFile() successfully read the specified input file.
+        // If so, call findShortestPath().
         if (loadFile(inputFileDir)) {
             findShortestPath();
         }
     }
 
+    /**
+     * Method used to read the contents (point coordinates) of the specified
+     * input file and store them into minePos.
+     * @param dir Input file directory.
+     * @return True if the specified input file was successfully loaded, False if an error occurred.
+     */
     private boolean loadFile(String dir) {
         File file = new File(dir);
         Scanner scanner;
@@ -45,50 +47,56 @@ public class Mines {
                     minesPos.add(point);
                 }
             }
-            this.startPos = minesPos.remove(0);
-            this.treasurePos = minesPos.remove(0);
+            this.startPos = minesPos.remove(0); // Remove the first element from minePos and set its value to startPos.
+            this.treasurePos = minesPos.remove(0); // Remove the second element (now in the first element position, since
+                                                     // we extracted the first element for startPos) from minePos and set
+                                                     // its value to treasurePos.
             return true;
         } catch (FileNotFoundException e) {
-//            e.printStackTrace();
             System.out.println("*** Error: File not Found. ***");
             return false;
         }
-
-
-
-//        // DIAG ONLY!!!
-//        System.out.println("================ DIAG ================");
-//        System.out.printf("*** Starting position is: %d %d ***\n", this.startPos[0], this.startPos[1]);
-//        System.out.printf("*** Treasure position is: %d %d ***\n", this.treasurePos[0], this.treasurePos[1]);
-//        for (int[] point : this.minesPos) {
-//            System.out.printf("%d %d\n", point[0], point[1]);
-//        }
     }
 
+    /**
+     * Calculates the distance between 2 given points.
+     * @param point1 The first point.
+     * @param point2 The second point.
+     * @return The distance between the 2 given points.
+     */
     private double pointsDistance(int[] point1, int[] point2) {
         return Math.sqrt(Math.pow(point2[0] - point1[0], 2) + Math.pow(point2[1] - point1[1], 2));
     }
 
-    public int[] maxPointUsingAngle(int[] tp1, int[] tp2, int[] p1, int[] pn) {
+    /**
+     * Used to find the max point using the maximum angle.
+     * @param p1 Point p1 of the given p1pn line.
+     * @param pn Point pn of the given p1pn line.
+     * @param side The side on which the max point should be on.
+     * @return The max point index in minesPos list.
+     */
+    public int maxPointUsingAngle(int[] p1, int[] pn, int side) {
         double p1pnDistance = pointsDistance(p1, pn);
 
-        // Calculate the angle for test point 1 (tp1)
-        double tp1pnDistance = pointsDistance(tp1, pn);
-        double tp1p1Distance = pointsDistance(tp1, p1);
-        double angle1 = Math.acos((Math.pow(tp1pnDistance, 2) + Math.pow(tp1p1Distance, 2) - Math.pow(p1pnDistance, 2))
-                / (2 * tp1pnDistance * tp1p1Distance));
+        int maxIndex = -1;
+        double maxAngle = -1;
 
-        // Calculate the angle for test point 2 (tp2)
-        double tp2pnDistance = pointsDistance(tp2, pn);
-        double tp2p1Distance = pointsDistance(tp2, p1);
-        double angle2 = Math.acos((Math.pow(tp2pnDistance, 2) + Math.pow(tp2p1Distance, 2) - Math.pow(p1pnDistance, 2))
-                / (2 * tp2pnDistance * tp2p1Distance));
+        for (int i = 0; i < minesPos.size(); i++) {
+            int[] tp = minesPos.get(i);
 
-        if (angle1 >= angle2) {
-            return tp1;
-        } else {
-            return tp2;
+            if (determinePointSide(tp, p1, pn) == side) {
+                double tppnDistance = pointsDistance(tp, pn);
+                double tpp1Distance = pointsDistance(tp, p1);
+                double angle = Math.acos((Math.pow(tppnDistance, 2) + Math.pow(tpp1Distance, 2) - Math.pow(p1pnDistance, 2))
+                        / (2 * tppnDistance * tpp1Distance));
+
+                if (angle > maxAngle) {
+                    maxIndex = i;
+                    maxAngle = angle;
+                }
+            }
         }
+        return maxIndex;
     }
 
     //    ************ ATTENTION : slide 197, book pdf
@@ -124,15 +132,15 @@ public class Mines {
                     maxIndex = i;
                     maxDistance = tempDistance;
                 } else if (tempDistance == maxDistance) {
-                    // **** WIP: Calculate angle - slide 196
-                    if (maxPointUsingAngle(minesPos.get(maxIndex), minesPos.get(i), p1, pn) ==
-                            minesPos.get(i)) {
-                        maxIndex = i;
-                        maxDistance = tempDistance;
+                    // Find the index of the maximum point based on the angle maximization technique.
+                    maxIndex = maxPointUsingAngle(p1, pn, side);
+
+                    // The maximum point was found based on the maximum angle, so we can now break the loop.
+                    break;
                     }
                 }
             }
-        }
+
 
         if (maxIndex == -1) {
             //If no points are found, add p1 and pn to the
