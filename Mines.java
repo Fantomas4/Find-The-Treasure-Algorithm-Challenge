@@ -138,6 +138,16 @@ public class Mines {
                 (linePoint2[1] - linePoint1[1]) * (targetPoint[0] - linePoint1[0]));
     }
 
+    /**
+     * Recursive method used to find the points that define the
+     * Convex-Hull of the given 2D point space using the Quick Hull
+     * algorithm.
+     * @param p1 The first point that defines the base line used by the Quick Hull algorithm.
+     * @param pn The second point that defines the base line used by the Quick Hull algorithm.
+     * @param side Defines the side of the line on which the Quick Hull algorithm will expand
+     *             the Hull. If set to 1, the sub-hull on the left side of line p1pn is expanded.
+     *             If set to -1, the the sub-hull on the right side of line p1pn is expanded.
+     */
     private void quickhull(int[] p1, int[] pn, int side) {
         int maxIndex = -1;
         int maxDistance = 0;
@@ -160,7 +170,6 @@ public class Mines {
                 }
             }
         }
-
 
         if (maxIndex == -1) {
             //If no points are found, add p1 and pn to the hull
@@ -199,6 +208,14 @@ public class Mines {
         }
     }
 
+    /**
+     * Helper function of mergeSort() used to merge the generated
+     * sub-lists into a unified sorted list. Points are sorted into the
+     * unified list based on their x-coordinate value.
+     * @param subList1 The first sub-list.
+     * @param subList2 The second sub-list.
+     * @return A unified and sorted list that contains the elements of subList1 and subList2.
+     */
     private List<int[]> merge(List<int[]> subList1, List<int[]> subList2) {
         int i = 0;
         int j = 0;
@@ -233,6 +250,11 @@ public class Mines {
         return mergedList;
     }
 
+    /**
+     * Performs a merge sort on a given list of points.
+     * @param initialList The given list of points.
+     * @return A sorted list of points.
+     */
     private List<int[]> mergeSort(List<int[]> initialList) {
         double size = initialList.size();
 
@@ -300,6 +322,11 @@ public class Mines {
         System.out.println("The shortest path is:" + pathPointsString(pathPoints));
     }
 
+    /**
+     * Called to begin the calculations that will result
+     * in the minefield problem solution based on a Convex Hull
+     * Analysis solution.
+     */
     public void findShortestPath() {
         findConvexHull();
         findSubHulls();
