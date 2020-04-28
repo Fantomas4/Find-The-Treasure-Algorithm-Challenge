@@ -69,34 +69,34 @@ public class Mines {
     }
 
     /**
-     * Used to find the max point using the maximum angle.
+     * Given 2 points tp1 and tp2, the method returns the max point by
+     * determining if the maximum angle is achieved by tp1p1pn or tp2p1pn.
+     * @param tp1 The first given test point.
+     * @param tp2 The second given test point.
      * @param p1 Point p1 of the given p1pn line.
      * @param pn Point pn of the given p1pn line.
-     * @param side The side on which the max point should be on.
-     * @return The max point index in minesPos list.
+     * @return The point (tp1 or tp2) that was determined to be the max point.
      */
-    public int maxPointUsingAngle(int[] p1, int[] pn, int side) {
+    public int[] maxPointUsingAngle(int[] tp1, int[] tp2, int[] p1, int[] pn) {
         double p1pnDistance = pointsDistance(p1, pn);
 
-        int maxIndex = -1;
-        double maxAngle = -1;
+        // Calculate the angle tp1p1pn for test point 1 (tp1)
+        double tp1pnDistance = pointsDistance(tp1, pn);
+        double tp1p1Distance = pointsDistance(tp1, p1);
+        double angle1 = Math.acos((Math.pow(tp1p1Distance, 2) + Math.pow(p1pnDistance, 2) - Math.pow(tp1pnDistance, 2))
+                / (2 * tp1p1Distance * p1pnDistance));
 
-        for (int i = 0; i < minesPos.size(); i++) {
-            int[] tp = minesPos.get(i);
+        // Calculate the angle tp2p1pn for test point 2 (tp2)
+        double tp2pnDistance = pointsDistance(tp2, pn);
+        double tp2p1Distance = pointsDistance(tp2, p1);
+        double angle2 = Math.acos((Math.pow(tp2p1Distance, 2) + Math.pow(p1pnDistance, 2) - Math.pow(tp2pnDistance, 2))
+                / (2 * tp2p1Distance * p1pnDistance));
 
-            if (determinePointSide(tp, p1, pn) == side) {
-                double tppnDistance = pointsDistance(tp, pn);
-                double tpp1Distance = pointsDistance(tp, p1);
-                double angle = Math.acos((Math.pow(tppnDistance, 2) + Math.pow(tpp1Distance, 2) - Math.pow(p1pnDistance, 2))
-                        / (2 * tppnDistance * tpp1Distance));
-
-                if (angle > maxAngle) {
-                    maxIndex = i;
-                    maxAngle = angle;
-                }
-            }
+        if (angle1 >= angle2) {
+            return tp1;
+        } else {
+            return tp2;
         }
-        return maxIndex;
     }
 
     //    ************ ATTENTION : slide 197, book pdf
@@ -133,13 +133,14 @@ public class Mines {
                     maxDistance = tempDistance;
                 } else if (tempDistance == maxDistance) {
                     // Find the index of the maximum point based on the angle maximization technique.
-                    maxIndex = maxPointUsingAngle(p1, pn, side);
-
-                    // The maximum point was found based on the maximum angle, so we can now break the loop.
-                    break;
+                    if (maxPointUsingAngle(minesPos.get(maxIndex), minesPos.get(i), p1, pn) ==
+                            minesPos.get(i)) {
+                        maxIndex = i;
+                        maxDistance = tempDistance;
                     }
                 }
             }
+        }
 
 
         if (maxIndex == -1) {
