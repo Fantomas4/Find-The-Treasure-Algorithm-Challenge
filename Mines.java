@@ -123,7 +123,6 @@ public class Mines {
         }
     }
 
-    //    ************ ATTENTION : slide 197, book pdf
     /**
      * Calculates the distance of a given point from a given line.
      * @param targetPoint The given point for which we want to calculate the distance from a line.
