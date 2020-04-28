@@ -147,7 +147,7 @@ public class Mines {
             int tempDistance = pointToLineDist(minesPos.get(i), p1, pn);
             if (determinePointSide(minesPos.get(i), p1, pn) == side) {
                 if (tempDistance > maxDistance) {
-//                If the current mine point has a greater distance from p1pn than maxDistance
+                // If the current mine point has a greater distance from p1pn than maxDistance
                     maxIndex = i;
                     maxDistance = tempDistance;
                 } else if (tempDistance == maxDistance) {
@@ -163,38 +163,31 @@ public class Mines {
 
 
         if (maxIndex == -1) {
-            //If no points are found, add p1 and pn to the
-            // appropriate Sub-Hull arraylist
-//            if (side == 1) {
-//                topSubHull.add(p1);
-//                topSubHull.add(pn);
-//            } else if (side == -1) {
-//                bottomSubHull.add(p1);
-//                bottomSubHull.add(pn);
-//            }
+            //If no points are found, add p1 and pn to the hull
             hull.add(p1);
             hull.add(pn);
             return;
         }
 
-        // Na afairw apo to minesPos osa stoixeia elegxw oste na meiwsw ton arithmo epanalipseon
-        // stiw epomenes anazitiseis quickhull?
-
         quickhull(minesPos.get(maxIndex), p1, -determinePointSide(pn, minesPos.get(maxIndex), p1));
         quickhull(minesPos.get(maxIndex), pn, -determinePointSide(p1, minesPos.get(maxIndex), pn));
     }
 
+    /**
+     * Calls quickhull() to calculate the hull that consists of the
+     * top sub-hull and the bottom sub-hull defined by the line between
+     * the starting position and the treasure position.
+     */
     private void findConvexHull() {
         quickhull(startPos, treasurePos, 1);
         quickhull(startPos, treasurePos, -1);
-
-//        //        DIAG !!!
-//        System.out.println("Convex hull is: ");
-//        for (int[] point : hull) {
-//            System.out.printf("%d %d\n", point[0], point[1]);
-//        }
     }
 
+    /**
+     * Groups the points of the calculated hull into sub-hulls, by adding the points
+     * that belong to the top sub-hull to the topSubHull list property and the points
+     * that belong to the bottom sub-hull to the bottomSubHull list property.
+     */
     private void findSubHulls() {
         for (int[] point : hull) {
             int side = determinePointSide(point, startPos, treasurePos);
@@ -262,6 +255,12 @@ public class Mines {
         return initialList;
     }
 
+    /**
+     * Calculates the total distance of a path, given a list containing
+     * the points that define the path.
+     * @param pathPoints A list of points that define the given path.
+     * @return The total distance covered by the path.
+     */
     private double calculatePathDistance(List<int[]> pathPoints) {
         double totalDistance = 0;
 
@@ -272,6 +271,12 @@ public class Mines {
         return totalDistance;
     }
 
+    /**
+     * Given a list of path points, generates the result path string in the format
+     * defined by the task's description
+     * @param pathPoints A list of path points.
+     * @return A string that contains the result path in the appropriate format.
+     */
     private String pathPointsString(List<int[]> pathPoints) {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -288,28 +293,17 @@ public class Mines {
         findConvexHull();
         findSubHulls();
 
-
         List<int[]> topSortedPath = mergeSort(topSubHull);
         // Add start position to the start of the sorted top path list
         topSortedPath.add(0, startPos);
         // Add treasure position to the end of the sorted top path list
         topSortedPath.add(treasurePos);
-//        //        DIAG !!!
-//        System.out.println("===================");
-//        for (int[] point : topSortedPath) {
-//            System.out.printf("%d %d\n", point[0], point[1]);
-//        }
 
         List<int[]> bottomSortedPath = mergeSort(bottomSubHull);
         // Add start position at the start of the sorted bottom path list
         bottomSortedPath.add(0, startPos);
         // Add treasure position at the end of the sorted bottom path list
         bottomSortedPath.add(treasurePos);
-//        //        DIAG !!!
-//        System.out.println("===================");
-//        for (int[] point : bottomSortedPath) {
-//            System.out.printf("%d %d\n", point[0], point[1]);
-//        }
 
         double topPathDistance = calculatePathDistance(topSortedPath);
         double bottomPathDistance = calculatePathDistance(bottomSortedPath);
