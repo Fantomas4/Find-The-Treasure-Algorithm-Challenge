@@ -139,30 +139,35 @@ public class Mines {
 
     /**
      * Recursive method used to find the points that define the
-     * Convex-Hull of the given 2D point space using the Quick Hull
+     * Convex-Hull of a given 2D point space using the Quick Hull
      * algorithm.
      * @param p1 The first point that defines the base line used by the Quick Hull algorithm.
      * @param pn The second point that defines the base line used by the Quick Hull algorithm.
      * @param side Defines the side of the line on which the Quick Hull algorithm will expand
      *             the Hull. If set to 1, the sub-hull on the left side of line p1pn is expanded.
      *             If set to -1, the the sub-hull on the right side of line p1pn is expanded.
+     * @param candidatePoints The given 2D point space.
      */
-    private void quickhull(int[] p1, int[] pn, int side) {
+    private void quickHull(int[] p1, int[] pn, int side, List<int[]> candidatePoints) {
         int maxIndex = -1;
         int maxDistance = 0;
 
+        List<int[]> newCandidatePoints = new ArrayList<>();
+
         //Find the point with the maximum distance from line p1pn
-        for (int i = 0; i < minesPos.size(); i++) {
-            int tempDistance = pointToLineDist(minesPos.get(i), p1, pn);
-            if (determinePointSide(minesPos.get(i), p1, pn) == side) {
+        for (int i = 0; i < candidatePoints.size(); i++) {
+            int tempDistance = pointToLineDist(candidatePoints.get(i), p1, pn);
+            if (determinePointSide(candidatePoints.get(i), p1, pn) == side) {
+                // Since the point is on the correct side, add it to the new candidate points list.
+                newCandidatePoints.add(candidatePoints.get(i));
                 if (tempDistance > maxDistance) {
                 // If the current mine point has a greater distance from p1pn than maxDistance
                     maxIndex = i;
                     maxDistance = tempDistance;
                 } else if (tempDistance == maxDistance) {
                     // Find the index of the maximum point based on the angle maximization technique.
-                    if (maxPointUsingAngle(minesPos.get(maxIndex), minesPos.get(i), p1, pn) ==
-                            minesPos.get(i)) {
+                    if (maxPointUsingAngle(candidatePoints.get(maxIndex), candidatePoints.get(i), p1, pn) ==
+                            candidatePoints.get(i)) {
                         maxIndex = i;
                         maxDistance = tempDistance;
                     }
@@ -177,8 +182,8 @@ public class Mines {
             return;
         }
 
-        quickhull(minesPos.get(maxIndex), p1, -determinePointSide(pn, minesPos.get(maxIndex), p1));
-        quickhull(minesPos.get(maxIndex), pn, -determinePointSide(p1, minesPos.get(maxIndex), pn));
+        quickHull(candidatePoints.get(maxIndex), p1, -determinePointSide(pn, candidatePoints.get(maxIndex), p1), newCandidatePoints);
+        quickHull(candidatePoints.get(maxIndex), pn, -determinePointSide(p1, candidatePoints.get(maxIndex), pn), newCandidatePoints);
     }
 
     /**
@@ -187,8 +192,10 @@ public class Mines {
      * the starting position and the treasure position.
      */
     private void findConvexHull() {
-        quickhull(startPos, treasurePos, 1);
-        quickhull(startPos, treasurePos, -1);
+        // Clone minePos list property and pass separate clone copies to each one of
+        // the quickHull() method calls.
+        quickHull(startPos, treasurePos, 1, new ArrayList<>(minesPos));
+        quickHull(startPos, treasurePos, -1, new ArrayList<>(minesPos));
     }
 
     /**
