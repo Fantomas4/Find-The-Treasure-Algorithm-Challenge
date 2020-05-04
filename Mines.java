@@ -361,6 +361,5 @@ public class Mines {
 
     public static void main(String[] args) {
         Mines mines = new Mines(args[0]);
-
     }
 }
