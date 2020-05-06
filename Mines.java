@@ -152,7 +152,7 @@ public class Mines {
      */
     private void quickHull(int[] p1, int[] pn, int side, List<int[]> candidatePoints) {
         int maxIndex = -1;
-        int maxDistance = 0;
+        int maxDistance = -1;
 
         List<int[]> newCandidatePoints = new ArrayList<>();
 
