@@ -232,12 +232,22 @@ public class Mines {
         int size2 = subList2.size();
         while (i < size1 && j < size2) {
             // Compare points based on their x value
-            if (subList1.get(i)[0] <= subList2.get(j)[0]) {
+            if (subList1.get(i)[0] < subList2.get(j)[0]) {
                 mergedList.add(subList1.get(i));
                 i += 1;
-            } else {
+            } else if (subList1.get(i)[0] > subList2.get(j)[0]){
                 mergedList.add(subList2.get(j));
                 j += 1;
+            } else {
+                // If the 2 points have an equal x-coordinate,
+                // compare their y-coordinate
+                if (subList1.get(i)[1] <= subList2.get(j)[1]) {
+                    mergedList.add(subList1.get(i));
+                    i += 1;
+                } else if (subList1.get(i)[1] > subList2.get(j)[1]) {
+                    mergedList.add(subList2.get(j));
+                    j += 1;
+                }
             }
         }
 
