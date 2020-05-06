@@ -111,6 +111,8 @@ public class Mines {
      * -1 if the point is located to the right of the line.
      */
     private int determinePointSide(int[] targetPoint, int[] linePoint1, int[] linePoint2) {
+        // Based on a formula from "Introduction to the Design and Analysis of Algorithms" by Levitin,
+        // page 197
         int value = (targetPoint[1] - linePoint1[1]) * (linePoint2[0] - linePoint1[0]) -
                 (linePoint2[1] - linePoint1[1]) * (targetPoint[0] - linePoint1[0]);
 
@@ -209,6 +211,11 @@ public class Mines {
             if (side == 1) {
                 topSubHull.add(point);
             } else if (side == -1) {
+                bottomSubHull.add(point);
+            } else {
+                // If the point is located on the line connecting
+                // startPos and treasurePos, add it to both sub-hulls.
+                topSubHull.add(point);
                 bottomSubHull.add(point);
             }
         }
@@ -348,16 +355,7 @@ public class Mines {
         findSubHulls();
 
         List<int[]> topSortedPath = mergeSort(topSubHull);
-        // Add start position to the start of the sorted top path list
-        topSortedPath.add(0, startPos);
-        // Add treasure position to the end of the sorted top path list
-        topSortedPath.add(treasurePos);
-
         List<int[]> bottomSortedPath = mergeSort(bottomSubHull);
-        // Add start position to the start of the sorted bottom path list
-        bottomSortedPath.add(0, startPos);
-        // Add treasure position to the end of the sorted bottom path list
-        bottomSortedPath.add(treasurePos);
 
         double topPathDistance = calculatePathDistance(topSortedPath);
         double bottomPathDistance = calculatePathDistance(bottomSortedPath);
