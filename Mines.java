@@ -77,7 +77,7 @@ public class Mines {
      * @param pn Point pn of the given p1pn line.
      * @return The point (tp1 or tp2) that was determined to be the max point.
      */
-    public int[] maxPointUsingAngle(int[] tp1, int[] tp2, int[] p1, int[] pn) {
+    private int[] maxPointUsingAngle(int[] tp1, int[] tp2, int[] p1, int[] pn) {
         double p1pnDistance = pointsDistance(p1, pn);
 
         // Calculate the angle tp1p1pn for test point 1 (tp1)
@@ -156,7 +156,7 @@ public class Mines {
 
         List<int[]> newCandidatePoints = new ArrayList<>();
 
-        //Find the point with the maximum distance from line p1pn
+        // Find the point with the maximum distance from line p1pn
         for (int i = 0; i < candidatePoints.size(); i++) {
             int tempDistance = pointToLineDist(candidatePoints.get(i), p1, pn);
             if (determinePointSide(candidatePoints.get(i), p1, pn) == side) {
@@ -178,7 +178,7 @@ public class Mines {
         }
 
         if (maxIndex == -1) {
-            //If no points are found, add p1 and pn to the hull
+            // If no points are found, add p1 and pn to the hull
             hull.add(p1);
             hull.add(pn);
             return;
